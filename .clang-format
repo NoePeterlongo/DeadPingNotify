@@ -1,0 +1,62 @@
+---
+Language:        Cpp
+BasedOnStyle:    LLVM
+IndentWidth:     4
+UseTab:          Never
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction:  false
+  AfterClass:     false
+  AfterControlStatement: false
+  AfterEnum:      false
+  AfterStruct:    false
+  AfterUnion:     false
+  AfterExternBlock: true
+  BeforeCatch:    true
+  BeforeElse:     true
+  IndentBraces:   false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortBlocksOnASingleLine: false  # Désactive les blocs courts sur une seule ligne
+AllowShortLoopsOnASingleLine: false
+IndentCaseLabels: true
+ColumnLimit:     100
+AccessModifierOffset: -4
+NamespaceIndentation: None
+FixNamespaceComments: true
+
+# Alignement et organisation
+AlignAfterOpenBracket: AlwaysBreak
+BinPackParameters: false
+BinPackArguments: false
+PointerAlignment: Right
+SortIncludes: true
+
+# Espaces
+SpaceBeforeAssignmentOperators: true
+SpacesInAngles: false
+SpacesInContainerLiterals: true
+SpacesInSquareBrackets: false
+
+# Lignes et sauts
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+BreakBeforeBinaryOperators: All
+BreakBeforeTernaryOperators: true
+
+# Includes
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex:           '^<.*>'
+    Priority:        1
+  - Regex:           '^".*'
+    Priority:        2
+
+# Options avancées
+UseCRLF: false
+PackConstructorInitializers: BinPack
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+
+AllowShortFunctionsOnASingleLine: None
