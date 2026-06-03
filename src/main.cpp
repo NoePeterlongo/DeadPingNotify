@@ -24,7 +24,7 @@ String buildHTML() {
     html += "<form action='/save' method='post'>";
     html += "Server: <input type='text' name='server' value='" + config.server + "'><br>";
     html += "ID: <input type='text' name='id' value='" + config.id + "'><br>";
-    html += "API Key: <input type='text' name='api_key' value=''><br>";
+    html += "API Key: <input type='text' name='api_key' value='" + config.api_key + "'><br>";
     html += "Interval (seconds): <input type='number' name='interval_seconds' value='"
             + String(config.intervalSeconds) + "'><br>";
     html += "<input type='submit' value='Save'>";
@@ -79,24 +79,38 @@ void sendPing() {
     if (config.server.isEmpty())
         return;
 
+    // 1. Préparation du payload JSON
+    JsonDocument doc;
+    doc["api_key"] = config.api_key;
+    doc["id"] = config.id;
+
+    String payload;
+    serializeJson(doc, payload);
+
     WiFiClientSecure client;
-    client.setInsecure(); // Connexion HTTPS sans certificat
+    client.setInsecure();
 
     HTTPClient http;
 
     if (http.begin(client, config.server)) {
-        http.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS); // Gestion des redirections Google
+        http.setFollowRedirects(HTTPC_DISABLE_FOLLOW_REDIRECTS);
         http.addHeader("Content-Type", "application/json");
 
-        // Clés JSON remises en Anglais
-        JsonDocument doc;
-        doc["api_key"] = config.api_key;
-        doc["id"] = config.id;
-
-        String payload;
-        serializeJson(doc, payload);
+        const char *headerKeys[] = {"Location"};
+        http.collectHeaders(headerKeys, 1);
 
         int httpCode = http.POST(payload);
+
+        if (httpCode == 302) {
+            String redirectUrl = http.header("Location");
+
+            http.end();
+
+            if (!redirectUrl.isEmpty() && http.begin(client, redirectUrl)) {
+                httpCode = http.GET();
+            }
+        }
+
         if (httpCode > 0) {
             Serial.printf("Ping sent: %d\n", httpCode);
             String response = http.getString();
