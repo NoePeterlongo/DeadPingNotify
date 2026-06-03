@@ -1,6 +1,6 @@
 /**
  * Handles incoming pings from ESP32 devices (POST request)
- * Updates the timestamp and clears notification status.
+ * Updates the timestamp, clears notification status, and alerts if it returns online.
  */
 function doPost(e) {
   try {
@@ -19,23 +19,47 @@ function doPost(e) {
       return ContentService.createTextOutput("Error: Missing device identifier.");
     }
     
-    // 2. Search for the device ID in the sheet (starting from row 3 / index 2)
+    // 2. Search for the device ID in the sheet (starting from row 5 / index 4)
     const rows = sheet.getDataRange().getValues();
     const serverTimestamp = new Date().getTime();
     let rowIndex = -1;
     
-    for (let i = 2; i < rows.length; i++) {
+    for (let i = 4; i < rows.length; i++) {
       if (rows[i][0] === deviceId) {
         rowIndex = i + 1; // Convert 0-based index to 1-based row number
         break;
       }
     }
     
-    // 3. Update existing row or create a new one
+    const emailRow = rows[0];
+    const recipients = [];
+    for (let j = 1; j < emailRow.length; j++) {
+      const email = emailRow[j].toString().trim();
+      if (email && email.includes("@")) {
+        recipients.push(email);
+      }
+    }
+    const emailList = recipients.join(",");
+    
+    // 4. Update existing row or create a new one
     if (rowIndex !== -1) {
+      const previousStatus = rows[rowIndex - 1][2]; 
+      
       // Device found: Update timestamp (Col B) and clear notification status (Col C)
       sheet.getRange(rowIndex, 2).setValue(serverTimestamp);
       sheet.getRange(rowIndex, 3).setValue(""); 
+      
+      // SI le système était hors-ligne (notification envoyée), on signale son retour
+      if (previousStatus === "Notification Envoyée" && emailList) {
+        const formattedDate = new Date(serverTimestamp).toLocaleString("fr-FR");
+        const subject = `🟢 Retour en ligne - ESP32 (${deviceId})`;
+        const body = `L'ESP32 avec l'identifiant "${deviceId}" est de nouveau en ligne.\n\n` +
+                     `Ping de reprise reçu le : ${formattedDate}\n` +
+                     `Le système fonctionne à nouveau normalement.`;
+        
+        MailApp.sendEmail(emailList, subject, body);
+      }
+      
     } else {
       // Device not found: Append a new row [ID, Timestamp, Status]
       sheet.appendRow([deviceId, serverTimestamp, ""]);
@@ -55,7 +79,7 @@ function checkDevicePings() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const rows = sheet.getDataRange().getValues();
   
-  if (rows.length < 3) return; // Not enough data to process (needs at least config, headers, and 1 data row)
+  if (rows.length < 5) return; // Au moins les lignes de config + les entêtes + 1 ligne de données
   
   // 1. Retrieve email recipients from Row 1 (starting from Column B / index 1)
   const emailRow = rows[0];
@@ -73,7 +97,7 @@ function checkDevicePings() {
   }
   const emailList = recipients.join(","); // Comma-separated list for MailApp
 
-  const TIMEOUT_MS = sheet.getRange(3, 2).getValue();
+  const TIMEOUT_S = sheet.getRange(3, 2).getValue();
   
   // 2. Check each device from Row 5 onwards
   const now = new Date().getTime();
@@ -85,10 +109,10 @@ function checkDevicePings() {
     
     // Validate that we have a device ID and a numeric timestamp
     if (deviceId && typeof lastPing === "number" && status !== "Notification Envoyée") {
-      const ageMs = now - lastPing;
+      const ageS = (now - lastPing) / 1000;
       
       // If the device has stopped pinging (potential power outage)
-      if (ageMs > TIMEOUT_MS) {
+      if (ageS > TIMEOUT_S) {
         const rowNumber = i + 1;
         const formattedDate = new Date(lastPing).toLocaleString("fr-FR");
         

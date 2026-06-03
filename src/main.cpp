@@ -79,7 +79,6 @@ void sendPing() {
     if (config.server.isEmpty())
         return;
 
-    // 1. Préparation du payload JSON
     JsonDocument doc;
     doc["api_key"] = config.api_key;
     doc["id"] = config.id;
