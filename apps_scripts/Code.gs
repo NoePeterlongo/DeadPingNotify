@@ -21,7 +21,7 @@ function doPost(e) {
     
     // 2. Search for the device ID in the sheet (starting from row 5 / index 4)
     const rows = sheet.getDataRange().getValues();
-    const serverTimestamp = new Date().getTime();
+    const serverDate = new Date();
     let rowIndex = -1;
     
     for (let i = 4; i < rows.length; i++) {
@@ -46,12 +46,12 @@ function doPost(e) {
       const previousStatus = rows[rowIndex - 1][2]; 
       
       // Device found: Update timestamp (Col B) and clear notification status (Col C)
-      sheet.getRange(rowIndex, 2).setValue(serverTimestamp);
+      sheet.getRange(rowIndex, 2).setValue(serverDate);
       sheet.getRange(rowIndex, 3).setValue(""); 
       
       // SI le système était hors-ligne (notification envoyée), on signale son retour
       if (previousStatus === "Notification Envoyée" && emailList) {
-        const formattedDate = new Date(serverTimestamp).toLocaleString("fr-FR");
+        const formattedDate = serverDate.toLocaleString("fr-FR");
         const subject = `🟢 Retour en ligne - ESP32 (${deviceId})`;
         const body = `L'ESP32 avec l'identifiant "${deviceId}" est de nouveau en ligne.\n\n` +
                      `Ping de reprise reçu le : ${formattedDate}\n` +
@@ -61,8 +61,7 @@ function doPost(e) {
       }
       
     } else {
-      // Device not found: Append a new row [ID, Timestamp, Status]
-      sheet.appendRow([deviceId, serverTimestamp, ""]);
+      sheet.appendRow([deviceId, serverDate, ""]);
     }
     
     return ContentService.createTextOutput("Ping processed successfully.");
@@ -79,7 +78,7 @@ function checkDevicePings() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const rows = sheet.getDataRange().getValues();
   
-  if (rows.length < 5) return; // Au moins les lignes de config + les entêtes + 1 ligne de données
+  if (rows.length < 5) return; 
   
   // 1. Retrieve email recipients from Row 1 (starting from Column B / index 1)
   const emailRow = rows[0];
@@ -100,21 +99,21 @@ function checkDevicePings() {
   const TIMEOUT_S = sheet.getRange(3, 2).getValue();
   
   // 2. Check each device from Row 5 onwards
-  const now = new Date().getTime();
+  const now = new Date().getTime(); // Temps actuel en millisecondes pour le calcul
   
   for (let i = 4; i < rows.length; i++) {
     const deviceId = rows[i][0];
-    const lastPing = rows[i][1];
+    const lastPing = rows[i][1]; // Récupéré automatiquement comme un objet Date par Apps Script
     const status = rows[i][2];
     
-    // Validate that we have a device ID and a numeric timestamp
-    if (deviceId && typeof lastPing === "number" && status !== "Notification Envoyée") {
-      const ageS = (now - lastPing) / 1000;
+    if (deviceId && lastPing instanceof Date && !isNaN(lastPing.getTime()) && status !== "Notification Envoyée") {
+      
+      const ageS = (now - lastPing.getTime()) / 1000;
       
       // If the device has stopped pinging (potential power outage)
       if (ageS > TIMEOUT_S) {
         const rowNumber = i + 1;
-        const formattedDate = new Date(lastPing).toLocaleString("fr-FR");
+        const formattedDate = lastPing.toLocaleString("fr-FR");
         
         // Notification texts in French
         const subject = `⚠️ Coupure de courant suspectée - ESP32 (${deviceId})`;

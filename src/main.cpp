@@ -19,16 +19,47 @@ struct {
 } config;
 
 String buildHTML() {
-    String html = "<html><body>";
+    String html = "<!DOCTYPE html><html><head>";
+    html += "<meta name='viewport' content='width=device-width, initial-scale=1'>";
+    html += "<style>";
+    html += "body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, "
+            "Arial, sans-serif; background-color: #f4f7f9; color: #333; display: flex; "
+            "justify-content: center; align-items: center; min-height: 100vh; margin: 0; }";
+    html += ".container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px "
+            "15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }";
+    html += "h1 { color: #2c3e50; font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center; }";
+    html += ".form-group { margin-bottom: 1rem; }";
+    html += "label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; "
+            "color: #555; }";
+    html += "input[type='text'], input[type='number'] { width: 100%; padding: 0.75rem; border: 1px "
+            "solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }";
+    html += "input:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 2px "
+            "rgba(52,152,219,0.2); }";
+    html += "input[type='submit'] { width: 100%; background-color: #3498db; color: white; border: "
+            "none; padding: 0.8rem; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: "
+            "pointer; margin-top: 1rem; transition: background-color 0.2s; }";
+    html += "input[type='submit']:hover { background-color: #2980b9; }";
+    html += ".footer { text-align: center; margin-top: 1.5rem; font-size: 0.8rem; color: #888; }";
+    html += "</style>";
+    html += "<title>DeadPingNotify Config</title></head><body>";
+    html += "<div class='container'>";
     html += "<h1>Configuration</h1>";
     html += "<form action='/save' method='post'>";
-    html += "Server: <input type='text' name='server' value='" + config.server + "'><br>";
-    html += "ID: <input type='text' name='id' value='" + config.id + "'><br>";
-    html += "API Key: <input type='text' name='api_key' value='" + config.api_key + "'><br>";
-    html += "Interval (seconds): <input type='number' name='interval_seconds' value='"
-            + String(config.intervalSeconds) + "'><br>";
-    html += "<input type='submit' value='Save'>";
-    html += "</form></body></html>";
+    html += "<div class='form-group'><label>Server URL</label><input type='text' name='server' "
+            "value='"
+            + config.server + "' placeholder='https://script.google.com/...'></div>";
+    html += "<div class='form-group'><label>Device ID</label><input type='text' name='id' value='"
+            + config.id + "' placeholder='ex: Salon'></div>";
+    html
+        += "<div class='form-group'><label>API Key</label><input type='text' name='api_key' value='"
+           + config.api_key + "'></div>";
+    html += "<div class='form-group'><label>Interval (seconds)</label><input type='number' "
+            "name='interval_seconds' value='"
+            + String(config.intervalSeconds) + "'></div>";
+    html += "<input type='submit' value='Enregistrer la configuration'>";
+    html += "</form>";
+    html += "<div class='footer'>NoPingAlert &bull; ESP32 Monitor</div>";
+    html += "</div></body></html>";
     return html;
 }
 

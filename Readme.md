@@ -21,12 +21,12 @@ Le système repose sur deux composants principaux :
 Vous n'avez pas besoin d'installer d'environnement de développement pour utiliser le système.
 
 *   Accédez à l'[ESP Tool en ligne](https://espressif.github.io/esptool-js/) (La compatibilité avec Firefox n'est pas encore garantie).
-*   Téléchargez le binaire `.bin` (ou `.elf`) depuis la section [Releases](https://github.com/NoePeterlongo/DeadPingNotify/releases) de ce projet.
-*   Connectez votre ESP32 à votre ordinateur et flashez le firmware.
+*   Téléchargez le binaire `.bin` depuis la section [Releases](https://github.com/NoePeterlongo/DeadPingNotify/releases) de ce projet.
+*   Connectez votre ESP32 à votre ordinateur et flashez le firmware **à l'adresse flash 0x10000**.
 
 ### 2. Configuration Wifi et Accès à l'interface de l'ESP32
 
-*   Une fois flashé et démarré, l'ESP32 créera un point d'accès Wifi.
+*   Une fois flashé et démarré, l'ESP32 créera un point d'accès Wifi (ESP32_****).
 *   Connectez-vous à ce réseau avec votre smartphone ou ordinateur.
 *   Une page de configuration devrait s'ouvrir automatiquement. Sinon, accédez à l'adresse `192.168.4.1`.
 *   Configurez votre Wifi domestique.
@@ -55,10 +55,10 @@ Vous n'avez pas besoin d'installer d'environnement de développement pour utilis
 
     | | A | B | C |
     |---|---|---|---|
-    | **1** | **emails:** | destinataire@email.com | |
+    | **1** | **emails:** | mail@email.com | |
     | **2** | **api_key:** | MonSuperCodeSecret123! | |
     | **3** | **timeout_s:** | 60 | |
-    | **4** | **id** | **last ping (timestamp ms)** | **notification status** |
+    | **4** | **id** | **last ping** | **notification status** |
 6.  **Mise en place du Trigger** :
     *   Dans l'éditeur Apps Script, cliquez sur l'icône **Déclencheurs** (réveil) à gauche.
     *   Ajoutez un déclencheur pour la fonction `checkDevicePings`.
@@ -108,7 +108,7 @@ Pour que le système fonctionne de manière fiable sans fausses alertes, il est 
 L'ESP32 utilise `WiFiManager` pour la configuration simplifiée du Wifi. La configuration (URL, ID, Clé API) est stockée de manière persistante dans le système de fichiers `LittleFS`. Les pings sont envoyés via des requêtes POST sécurisées (en mode `Insecure` pour simplifier la gestion des certificats racine sur l'ESP32).
 
 ### Google Apps Script
-*   `doPost(e)` : Reçoit le JSON de l'ESP32, vérifie la clé API, et met à jour la ligne correspondante à l'ID de l'appareil avec le timestamp actuel (millisecondes).
+*   `doPost(e)` : Reçoit le JSON de l'ESP32, vérifie la clé API, et met à jour la ligne correspondante à l'ID de l'appareil avec la date actuelle.
 *   `checkDevicePings()` : Parcourt la liste des appareils. Si `Temps_Actuel - Dernier_Ping > Timeout`, et qu'aucune notification n'a été envoyée, il envoie un email et marque l'appareil comme "Notification Envoyée".
 
 ---
