@@ -49,7 +49,7 @@ function doPost(e) {
       sheet.getRange(rowIndex, 2).setValue(serverDate);
       sheet.getRange(rowIndex, 3).setValue(""); 
       
-      // SI le système était hors-ligne (notification envoyée), on signale son retour
+      // If the system was offline, notify its return
       if (previousStatus === "Notification Envoyée" && emailList) {
         const formattedDate = serverDate.toLocaleString("fr-FR");
         const subject = `🟢 Retour en ligne - ESP32 (${deviceId})`;
@@ -62,6 +62,15 @@ function doPost(e) {
       
     } else {
       sheet.appendRow([deviceId, serverDate, ""]);
+      // Notification for a new device connection
+      if (emailList) {
+        const formattedDate = serverDate.toLocaleString("fr-FR");
+        const subject = `🟢 Connexion d'un nouvel ESP32 (${deviceId})`;
+        const body = `L'ESP32 avec l'identifiant "${deviceId}" est en ligne.\n\n` +
+                     `Ping de reprise reçu le : ${formattedDate}\n`;
+        
+        MailApp.sendEmail(emailList, subject, body);
+      }
     }
     
     return ContentService.createTextOutput("Ping processed successfully.");
