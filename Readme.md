@@ -10,7 +10,7 @@ Le système repose sur deux composants principaux :
 2.  **Google Sheets & Apps Script** :
     *   **Le tableur (Sheets)** sert de base de données pour stocker le dernier moment où chaque ESP32 a été vu.
     *   **L'Apps Script** reçoit les pings, met à jour le tableur, et vérifie régulièrement si des appareils n'ont pas donné de nouvelles depuis trop longtemps.
-    *   Si un délai (timeout) est dépassé, une notification par email est envoyée aux destinataires configurés. Un email est également envoyé lors du retour en ligne de l'appareil.
+    *   Si un délai (timeout) est dépassé, une notification par email est envoyée aux destinataires configurés. Un email est également envoyé lors du retour en ligne de l'appareil, et la connexion d'un nouvel appareil.
 
 ---
 
@@ -20,9 +20,16 @@ Le système repose sur deux composants principaux :
 
 Vous n'avez pas besoin d'installer d'environnement de développement pour utiliser le système.
 
+*   Téléchargez les binaires `bootloader_esp32xx.bin`, `partitions_esp32xx.bin`, `firmware_esp32xx.bin` depuis la section [Releases](https://github.com/NoePeterlongo/DeadPingNotify/releases) de ce projet.
 *   Accédez à l'[ESP Tool en ligne](https://espressif.github.io/esptool-js/) (La compatibilité avec Firefox n'est pas encore garantie).
-*   Téléchargez le binaire `.bin` depuis la section [Releases](https://github.com/NoePeterlongo/DeadPingNotify/releases) de ce projet.
-*   Connectez votre ESP32 à votre ordinateur et flashez le firmware **à l'adresse flash 0x10000**.
+*   Connectez votre ESP32 à votre ordinateur et flashez-le :
+    - Dans la section `Program`, cliquez sur `Connect`, puis sélectionner le bon périphérique.
+    - Remplissez les champs : 
+    ![Champs esptool](doc/flash.png "")
+    - Cliquez sur `Program`. La progression s'affiche en dessous.
+    - Débranchez-rebranchez l'esp32.
+    - En cas de problème essayez de recommencer, en cliquant sur `Erase Flash` avant `Program`.
+
 
 ### 2. Configuration Wifi et Accès à l'interface de l'ESP32
 
@@ -31,6 +38,7 @@ Vous n'avez pas besoin d'installer d'environnement de développement pour utilis
 *   Une page de configuration devrait s'ouvrir automatiquement. Sinon, accédez à l'adresse `192.168.4.1`.
 *   Configurez votre Wifi domestique.
 *   Une fois connecté à votre Wifi, l'ESP32 obtiendra une adresse IP locale. Vous pouvez la trouver via le port série (115200 bauds) ou en scannant votre réseau.
+    *  Vous pouvez utiliser la section `Console` de [ESP Tool en ligne](https://espressif.github.io/esptool-js/) pour vous connecter via le port série, puis cliquer sur le bouton `RST` de la carte.
 *   Accédez à l'adresse IP de l'ESP32 dans votre navigateur pour accéder au formulaire de configuration.
 
 ### 3. Configuration de Google Sheets & Apps Script
