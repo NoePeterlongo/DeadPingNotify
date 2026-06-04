@@ -1,6 +1,7 @@
 # DeadPingNotify - Système de surveillance de coupures de courant
 
-DeadPingNotify est une solution simple et efficace pour surveiller les coupures de courant à distance en utilisant des microcontrôleurs ESP32 et Google Sheets comme serveur de monitoring.
+DeadPingNotify est une solution simple pour surveiller les coupures de courant à distance en utilisant des microcontrôleurs ESP32 et Google Sheets comme serveur de monitoring.
+![Champs esptool](doc/principle.png "")
 
 ## Principe de fonctionnement
 
@@ -27,7 +28,7 @@ Vous n'avez pas besoin d'installer d'environnement de développement pour utilis
     - Remplissez les champs : 
     ![Champs esptool](doc/flash.png "")
     - Cliquez sur `Program`. La progression s'affiche en dessous.
-    - Débranchez-rebranchez l'esp32.
+    - Débranchez-rebranchez l'esp32 (ou appuyez sur le bouton `RST` de la carte).
     - En cas de problème essayez de recommencer, en cliquant sur `Erase Flash` avant `Program`.
 
 
@@ -39,7 +40,7 @@ Vous n'avez pas besoin d'installer d'environnement de développement pour utilis
 *   Configurez votre Wifi domestique.
 *   Une fois connecté à votre Wifi, l'ESP32 obtiendra une adresse IP locale. Vous pouvez la trouver via le port série (115200 bauds) ou en scannant votre réseau.
     *  Vous pouvez utiliser la section `Console` de [ESP Tool en ligne](https://espressif.github.io/esptool-js/) pour vous connecter via le port série, puis cliquer sur le bouton `RST` de la carte.
-*   Accédez à l'adresse IP de l'ESP32 dans votre navigateur pour accéder au formulaire de configuration.
+*   Accédez à l'adresse IP de l'ESP32 dans votre navigateur (par exemple `http://192.168.1.42` (pas `https`)) pour accéder au formulaire de configuration. Il faut pour cela être connecté sur le même réseau wifi.
 
 ### 3. Configuration de Google Sheets & Apps Script
 
