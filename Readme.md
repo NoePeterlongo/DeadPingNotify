@@ -25,8 +25,11 @@ Vous n'avez pas besoin d'installer d'environnement de développement pour utilis
 *   Accédez à l'[ESP Tool en ligne](https://espressif.github.io/esptool-js/) (La compatibilité avec Firefox n'est pas encore garantie).
 *   Connectez votre ESP32 à votre ordinateur et flashez-le :
     - Dans la section `Program`, cliquez sur `Connect`, puis sélectionner le bon périphérique.
-    - Remplissez les champs : 
-    ![Champs esptool](doc/flash.png "")
+    - Remplissez les champs selon le modèle de carte:
+        - **esp32c3**: 
+    ![Champs esptool](doc/flash_esp32c3.png "")
+        - **esp32-wroom**: 
+    ![Champs esptool](doc/flash_esp32.png "")
     - Cliquez sur `Program`. La progression s'affiche en dessous.
     - Débranchez-rebranchez l'esp32 (ou appuyez sur le bouton `RST` de la carte).
     - En cas de problème essayez de recommencer, en cliquant sur `Erase Flash` avant `Program`.
