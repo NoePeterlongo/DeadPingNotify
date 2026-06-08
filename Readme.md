@@ -30,6 +30,7 @@ Vous n'avez pas besoin d'installer d'environnement de développement pour utilis
     ![Champs esptool](doc/flash_esp32c3.png "")
         - **esp32-wroom**: 
     ![Champs esptool](doc/flash_esp32.png "")
+    - **Note :** Pour reprogrammer une puce qui a été déjà flashée, il peut être suffisant de ne charger que `firmware.bin`, à l'addresse `0x10000`.
     - Cliquez sur `Program`. La progression s'affiche en dessous.
     - Débranchez-rebranchez l'esp32 (ou appuyez sur le bouton `RST` de la carte).
     - En cas de problème essayez de recommencer, en cliquant sur `Erase Flash` avant `Program`.
@@ -139,3 +140,4 @@ Si vous souhaitez modifier le code source de l'ESP32 :
 ## Autres éléments utiles
 *   Assurez-vous que l'ESP32 est branché sur une prise secteur que vous souhaitez surveiller.
 *   En cas de coupure de courant, votre routeur Wifi s'éteindra probablement aussi, empêchant l'ESP32 d'envoyer un dernier message. C'est précisément l'**absence de ping** reçue par Google Sheets qui déclenchera l'alerte.
+*   Si l'ESP32 ne parvient pas à se connecter au réseau WiFi pour lequel il a été configuré, il ouvre le portail de configuration WiFi pendant 3 minutes, puis redémarre. 

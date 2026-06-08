@@ -161,9 +161,10 @@ void setup() {
 
     // Wifi setup
     WiFiManager wm;
+    wm.setConfigPortalTimeout(180);
     bool res = wm.autoConnect();
     if (!res) {
-        Serial.println("Failed to connect");
+        Serial.println("Restarting...");
         delay(1000);
         ESP.restart();
     }
